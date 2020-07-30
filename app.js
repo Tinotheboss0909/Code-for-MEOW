@@ -12,8 +12,7 @@ const profanity = data.curses
 const bot = new Discord.Client({disableEveryone: true});
 
 const { Client, MessageAttachment } = require('discord.js');
-if (data.token == 'PUT_YOUR_TOKEN_HERE!')return console.log('Please set your token!')
-client.login(data.token)
+client.login(process.env.TOKEN)
 
 
 client.on('message', message => {
@@ -300,9 +299,9 @@ if (command === 'help') {
 let embed = new Discord.MessageEmbed()
     .setTitle(`Commands for ${message.client.user.username}`)
     .setThumbnail(message.client.user.displayAvatarURL())
-    .addField("**Utility**", "`info/i` - Gives you some info on a user your specify\n`serverinfo/si` - Gives you some info on the server\n`ping` - Just to check if the bot is alive\n`prefix` - Get the bot's prefix\n`avatar/av` - Get a user's avatar\n`math/calc/calculate` - Does some math for you!\n`suggest` - Makes a suggestion, it autos sets the suggestion channel if it's called `suggestion` or `suggestions`")
-    .addField("**Fun commands**", "`8ball` - Just a normal old 8ball command\n`clap` - Replaces all the spaces in your message with 👏\n`fruit` - Replaces all the spaces in your message with a random fruit emoji\n`space` - Replaces all the spaces in your message with a emoji you specify\n`echo` - Send a message in a channel you want!\n`snipe` - Returns the latest delete message(s)\n`random` - Picks a random element from the elements you specify\n`howgay/howgayis` - Get a user's gay percentage\n`meme` - Gives you a quality meme from r/dank\n`lenny` - Gives you a random lenny face\n`argscount/argslength` - Counts the amount of arguments you specified\n`amatic` - Changes your text to amatic font\n`hack` - Lets you 'hack a user'")
-    .addField("**Animal commands**", "`cat` - Gives you a random cat picture\n`catbomb` - Gives you 4 random cat images\n`monkey` - Gives you a random monkey image\n`monkeybomb` - Gives you 4 random monkey pictures\n`aww` - Gives you a picture of a cute animal\n`awwbomb` - Gives you 4 random pictures of a cute animal(s)\n`awwnuke` - A lot of cutenes\n`dog` - Gives you a random dog image\n`dogbomb` - Gives your 4 random dog images\n`ferret` - Gives you a random ferret image\n`ferretbomb` - Gives you 4 random ferret images")
+    .addField("**Utility**", "`info/i` - Gives you some info on a user your specify\n`serverinfo/si` - Gives you some info on the server\n`ping` - Just to check if the bot is alive\n`prefix` - Get the bot's prefix\n`avatar/av` - Get a user's avatar\n`math/calc/calculate` - Does some math for you!")
+    .addField("**Fun commands**", "`8ball` - Just a normal old 8ball command\n`clap` - Replaces all the spaces in your message with 👏\n`fruit` - Replaces all the spaces in your message with a random fruit emoji\n`space` - Replaces all the spaces in your message with a emoji you specify\n`echo` - Send a message in a channel you want!\n`snipe` - Returns the latest delete message(s)\n`random` - Picks a random element from the elements you specify\n`howgay/howgayis` - Get a user's gay percentage\n`meme` - Gives you a quality meme from r/dank\n`lenny` - Gives you a random lenny face\n`argscount/argslength` - Counts the amount of arguments you specified")
+    .addField("**Animal commands**", "`cat` - Gives you a random cat picture\n`catbomb` - Gives you 4 random cat images\n`monkey` - Gives you a random monkey image\n`monkeybomb` - Gives you 4 random monkey pictures\n`aww` - Gives you a picture of a cute animal\n`awwbomb` - Gives you 4 random pictures of a cute animal(s)\n`awwnuke` - A lot of cuteness, must be used in <#703021278982045716> for it to work\n`dog` - Gives you a random dog image\n`dogbomb` - Gives your 4 random dog images\n`ferret` - Gives you a random ferret image\n`ferretbomb` - Gives you 4 random ferret images")
     .addField("**Moderation commands**", "`ban` - Bans a user\n`kick` - Kicks a member\n`unban` - Unbans a member\n`purge` - Deletes the amount of messages you specify\n`softban` - Quickly bans then unbans the user")
     .setColor(message.member.displayHexColor)
     .setAuthor(message.author.tag, message.author.displayAvatarURL())
@@ -605,6 +604,7 @@ if (command === 'awwnuke') {
     console.log(mush)
                             var pup = randomPuppy('aww').then(beast => {
     console.log(beast)
+            if (message.channel.id !== '703021278982045716')return message.channel.send(`You must be in <#703021278982045716> to use this command, because the messages are too big`)
               message.channel.send(turl)
               message.channel.send(yurl)
               message.channel.send(purl)
@@ -793,7 +793,51 @@ client.on('message', message => {
 
 
 
+client.on('message', async message => {
+  if (!message.content.startsWith(prefix) || message.author.bot)return;
+  const args = message.content.slice(prefix.length).trim().split(' ');
+  const command = args.shift().toLowerCase();
+  if (command === 'pingmods') {
+    const tembed = new Discord.MessageEmbed()
+      .setDescription(`${message.author} Needs a moderator!`) 
+      .setThumbnail(message.author.displayAvatarURL({ dynamic: true}))   
+      .setAuthor(message.author.tag, message.author.displayAvatarURL())   
+      .setFooter(message.author.id)
+      .setTimestamp();
+    const embed = new Discord.MessageEmbed()
+        .setTitle('Are you sure?')
+        .setDescription('Are you sure you want to ping all mods? If your ping is useless/uneeded, you will be subject to moderator action. Think about that when deciding.\nReact with <:green_tick:737362033443602464> to accept, or <:red_tick:737362086023135272> to deny.')
+        .setThumbnail(message.author.displayAvatarURL())
+   const Eembed = new Discord.MessageEmbed()
+        .setTitle('Ping cancelled!')
+    const embed2 = new Discord.MessageEmbed()
+        .setTitle('Timedout, no reaction in 10 seconds!')
+        
+        const questionMessage = await message.channel.send(embed)
+      
+    
+    await questionMessage.react('737362033443602464')
+    await questionMessage.react('737362086023135272')
 
+    try {
+      const collected = await questionMessage.awaitReactions((reaction, user) => user.id == message.author.id && (reaction.emoji.id == '737362086023135272' || reaction.emoji.id == '737362033443602464'),
+                                     { max: 1, time: 10000, errors: ['time']})
+      
+      console.log(collected.first().emoji.id)
+      if (collected.first().emoji.id == '737362033443602464') {
+        questionMessage.edit(`<@&737781781415198861>`)
+        questionMessage.edit(tembed)
+              questionMessage.reactions.removeAll()
+      }
+      else questionMessage.edit(Eembed)
+          questionMessage.reactions.removeAll()
+      } catch (error) {
+            questionMessage.edit(embed2)
+          questionMessage.reactions.removeAll()
+    }
+    
+  }
+})
  
 
 
@@ -845,13 +889,236 @@ if (command == 'dm') {
 }
 })
 
+client.on('message', async message => {
+  if (!message.content.startsWith(prefix) || message.author.bot)return;
+  const args = message.content.slice(prefix.length).trim().split(' ');
+  const command = args.shift().toLowerCase();
+if (command == 'bal' || command == 'balance') {
+db.add(`bal_${message.author.id}`, 0)
+  let bal = db.get(`bal_${message.author.id}`)
+  let embed = new Discord.MessageEmbed()
+    .setAuthor(message.author.tag, message.author.displayAvatarURL({ dynamic: true}))
+    .setDescription(`Balance: **${bal}$**`)
+    .setTimestamp()
+    message.channel.send(embed)
+}
+})
+
+client.on('message', async message => {
+if (!message.content.startsWith(prefix) || message.author.bot)return;
+const args = message.content.slice(prefix.length).trim().split(' ');
+  const command = args.shift().toLowerCase();
+  if (command == 'work') {
+    const amount = Math.floor(Math.random() * 500) + 100;
+    const amount2 = Math.floor(Math.random() * 400) + 100;
+    const amount3 = Math.floor(Math.random() * 1100) + 250;
+    const amount4 = Math.floor(Math.random() * 625) + 125;
+    const job = db.get(`job_${message.author.id}`)
+    if (job == 0) {
+      message.channel.send('You dont have a job!'); 
+    } else if (job != 0) {
+      if (talkedRecently.has(message.author.id)) {
+        message.channel.send("This command has a 45 minute cooldown!");
+} else {
+      
+    
+     if (job == 'officer') {
+    
+    message.channel.send(`You had a long night shift as a police officer, but it paid well!\nYou earned ${amount}$ Today!`)
+    db.add(`bal_${message.author.id}`, amount)
+    
+  } else if (job == 'farmer') {
+    message.channel.send(`You plowed the fields, and milked the cows. So you earned ${amount2}$!`)
+    db.add(`bal_${message.author.id}`, amount2)
+  } else if (job == 'engineer') {
+    message.channel.send(`You made a DC motor, and got paid ${amount3}$!`)
+    db.add(`bal_${message.author.id}`, amount3)
+  } else if (job == 'musician') {
+   message.channel.send(`You song got #10 on spotify, so you made ${amount4}$!`)
+   db.add(`ban_${message.author.id}`, amount4)
+  } else message.channel.send('You dont have a job!')
+} talkedRecently.add(message.author.id);
+        setTimeout(() => {
+          // Removes the user from the set after a minute
+          talkedRecently.delete(message.author.id);
+        }, 2700000);
+    }
+}
+    
+})
+
+client.on('message', async message => {
+if (!message.content.startsWith(prefix) || message.author.bot)return;
+const args = message.content.slice(prefix.length).trim().split(' ');
+const command = args.shift().toLowerCase();
+let embed = new Discord.MessageEmbed()
+.setTitle('Valid jobs!')
+.setAuthor(message.author.tag, message.author.displayAvatarURL())
+.setColor(message.member.displayHexColor)
+.setDescription('- `police`\n- `farmer`\n- `engineer`\n- `musician`')
+.setTimestamp();
+if (command == 'job') {
+  if (!args[0])return message.channel.send('You didn\'t specify a job!');
+  if (args[0] == 'police') {
+    await db.set(`job_${message.author.id}`, 'officer');
+    message.channel.send('I set your job occupation to.. `police`!');
+
+  } else if (args[0] == 'farmer') {
+    await db.set(`job_${message.author.id}`, 'farmer');
+    message.channel.send('I set your job occupation to.. `farmer`!');
+  } else if (args[0] == 'engineer') {
+    await db.set(`job_${message.author.id}`, 'engineer')
+    message.channel.send('I set your job occupation to.. `engineer`!');
+  } else if (args[0] == 'musician') {
+    await db.set(`job_${message.author.id}`, `musician`)
+   message.channel.send('I set your job occupation to.. `musician`!')
+  } else if (args[0] == 'list') {
+    message.channel.send(embed)
+  } else if (args[0] == 'none' || args[0] == 'remove') {
+    message.channel.send('Alright, you are no longer employed!')
+    db.set(`job_${message.author.id}`, 0)
+  }
+  else message.channel.send('That isn\'t a valid job! Do `l!job list` to get a list of jobs');
+}
+})
+
+client.on('message', message => {
+  if (!message.content.startsWith(prefix) || message.author.bot)return
+  const args = message.content.slice(prefix.length).trim().split(' ');
+const command = args.shift().toLowerCase();
+if (command == 'work-info' || command == 'job-info') {
+const bal = db.get(`bal_${message.author.id}`)
+const job = db.get(`job_${message.author.id}`)
+const embed = new Discord.MessageEmbed()
+  .setAuthor(message.author.tag, message.author.displayAvatarURL({ dynamic: true}))
+  .setTitle('Some info on you!')
+  .addField("**Balance**", `**${bal}$**`, true)
+  .addField("**Employment**", `${job}`, true)
+  .setColor(message.member.displayHexColor)
+  .setTimestamp();
+  message.channel.send(embed)
+}
+})
+
+client.on('message', async message => {
+  if (!message.content.startsWith(prefix) || message.author.bot)return;
+  const args = message.content.slice(prefix.length).trim().split(' ');
+const command = args.shift().toLowerCase();
+if (command == 'inventory' || command == 'inv') {
+  const inv = await db.get(`inven_${message.author.id}`, { items: [] })
+  if (inv === null)return message.channel.send('You dont have anything your inventory!')
+    const newinv = inv.join(", ");
+  let embed = new Discord.MessageEmbed()
+  .setAuthor(message.author.tag, message.author.displayAvatarURL())
+  .setTitle('Your inventory!')
+  .setDescription(newinv)
+  message.channel.send(embed)
+}
+})
+
+client.on('message', async message => {
+  if (!message.content.startsWith(prefix) || message.author.bot)return;
+  const args = message.content.slice(prefix.length).trim().split(' ');
+  const command = args.shift().toLowerCase()
+  if (command === 'shop' || command == 'store') {
+    const sword = 355;
+    const pig = 100;
+    const inv = db.get(`inven_${message.author.id}`, { items: [] })
+    const bal = db.get(`bal_${message.author.id}`)
+    let embed = new Discord.MessageEmbed()
+    .setAuthor(message.author.tag, message.author.displayAvatarURL())
+    .setTitle('The shop!')
+    .addField("**Pig**", `${pig}$`, true)
+    .addField("**Sword**", `${sword}$`, true)
+    .setFooter('Shop made my ThatGuyTino#5390 ')
+    .setTimestamp();
+    if (!args[0]) {
+      message.channel.send(embed)
+    } else if (args[0] == 'pig') {
+      if (bal < `${pig}`)return message.channel.send('You cant afford a pig!');
+      if (inv !== null) {
+      if (inv.indexOf("pig") !== -1)return message.channel.send('You already have pig!');
+      }
+      message.channel.send(`I added a pig to your inventory!`)
+      db.push(`inven_${message.author.id}`, "pig");
+      db.subtract(`bal_${message.author.id}`, pig)
+    } else if (args[0] == 'sword') {
+        if (bal < `${sword}`)return message.channel.send('You cant afford a sword!')
+      if (inv !== null) {
+      if (inv.indexOf("sword") !== -1)return message.channel.send('You already have a sword!')
+      }
+        message.channel.send(`I added a sword to your inventory!`)
+        db.push(`inven_${message.author.id}`, "sword")
+        db.subtract(`bal_${message.author.id}`, sword)
+    } 
+  } else if (!message.content.startsWith(prefix) || message.author.bot)return;
+    if (command == 'remove') {
+    const inv = db.get(`inven_${message.author.id}`, { items: [] })
+        if (inv == null)return message.channel.send('You dont have anything in your inventory!')
+    const position = inv.indexOf(args[0])
+    message.channel.send(inv)
+   if (!args[0])return message.channel.send('What item do you want to remove?!');
+   if (inv.indexOf(args[0]) == -1)return message.channel.send('You dont have that item in your inventory!')
+  message.channel.send(`Successfully removed ${inv[position]}`)
+  inv.splice(position, 1)
+      
+
+  } else if (command == 'bet') {
+    const newmoney = args[0] * 2;
+    const balance = db.get(`bal_${message.author.id}`)
+    const output = ["Yes", "No"]
+    const newoutput = Math.floor(Math.random() * output.length)
+    const input = output[newoutput];
+    if (!args[0])return message.channel.send('You need to actually bet something!')
+    if (args[0] <= 0)return message.channel.send('You cant bet 0$!');
+    if (args[0] > balance)return message.channel.send(`You cant bet that much! You only have **${balance}$**`)
+    if (input == 'No') {
+      message.channel.send(`You lost ${args[0]}$!`)
+      db.subtract(`bal_${message.author.id}`, args[0])
+    } else message.channel.send(`You won ${newmoney}$!`)
+    db.add(`bal_${message.author.id}`, newmoney)
+
+  } else if (command == 'add-money') {
+    const role = 721526644052852766
+    if (!message.member.roles.cache.some(role => role.id == 721526644052852766))return message.channel.send('You cant use this command dumbo!')
+    const user = message.mentions.users.first()
+    if (!user)return message.channel.send('Who do you want to add money to....?')
+    const newuser = client.users.fetch(user.id).catch(err => {
+      message.channel.send('I couldn\'t find that user!')
+    })
+    if (!args[1])return message.channel.send('How much money do you want to give them!?!')
+    db.add(`bal_${user.id}`, args[1])
+    message.channel.send('Success!')
+  }
+})
+
+
+
+
+
+client.on('message', async message => {
+ if (message.author.bot)return;
+ db.add(`level_${message.author.id}_${message.guild.id}`, 0)
+ let n = await db.add(`level_${message.author.id}_${message.guild.id}`, 1)
+ let pop = await db.get(`level_${message.author.id}_${message.guild.id}`)
+ 
+   var result = (n - Math.floor(n)) !== 0; 
+  
+  if (result) {
+   message.reply(`Good job on getting to level ${result}`) 
+   message.channel.send('Sup!')
+  } else if (message.content.toLowerCase() == `${prefix}xp`) {
+message.channel.send(pop)
+  }
+})
+
 
 client.on('message', async message => {
   if (message.author.bot)return;
   const insults = ["You’re the reason God created the middle finger.", "You’re a grey sprinkle on a rainbow cupcake.", "If your brain was dynamite, there wouldn’t be enough to blow your hat off.", "You are more disappointing than an unsalted pretzel.", "Light travels faster than sound which is why you seemed bright until you spoke.", "We were happily married for one month, but unfortunately we’ve been married for 10 years.", "Your kid is so annoying, he makes his Happy Meal cry.", "You have so many gaps in your teeth it looks like your tongue is in jail.", "Your secrets are always safe with me. I never even listen when you tell me them.", "I’ll never forget the first time we met. But I’ll keep trying."]
   const result = Math.floor(Math.random() * insults.length)
-  const newinsults = [insults[result], null, null, null, null, null];
+  const newinsults = [insults[result], null, null, null, null, null, null, null];
   const rando = Math.floor(Math.random() * newinsults.length);
-client.setInterval(() => message.channel.send(newinsults[rando]))
+client.setInterval(() => message.channel.send(newinsults[rando]), 30000)
 
 })
