@@ -12,7 +12,8 @@ const profanity = data.curses
 const bot = new Discord.Client({disableEveryone: true});
 
 const { Client, MessageAttachment } = require('discord.js');
-client.login(process.env.TOKEN)
+if (data.token == 'PUT_YOUR_TOKEN_HERE!')return console.log('Please set your token!')
+client.login(data.token)
 
 
 client.on('message', message => {
