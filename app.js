@@ -846,15 +846,12 @@ if (command == 'dm') {
 })
 
 
-
 client.on('message', async message => {
   if (message.author.bot)return;
   const insults = ["You’re the reason God created the middle finger.", "You’re a grey sprinkle on a rainbow cupcake.", "If your brain was dynamite, there wouldn’t be enough to blow your hat off.", "You are more disappointing than an unsalted pretzel.", "Light travels faster than sound which is why you seemed bright until you spoke.", "We were happily married for one month, but unfortunately we’ve been married for 10 years.", "Your kid is so annoying, he makes his Happy Meal cry.", "You have so many gaps in your teeth it looks like your tongue is in jail.", "Your secrets are always safe with me. I never even listen when you tell me them.", "I’ll never forget the first time we met. But I’ll keep trying."]
   const result = Math.floor(Math.random() * insults.length)
-  const newinsults = [insults[result], ""];
+  const newinsults = [insults[result], null, null, null, null, null];
   const rando = Math.floor(Math.random() * newinsults.length);
-  client.setInterval(() => message.reply(newinsults[rando]), 45000);
-
-
+client.setInterval(() => message.channel.send(newinsults[rando]))
 
 })
